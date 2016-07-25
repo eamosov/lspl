@@ -1,4 +1,8 @@
-find_package(Boost)
+find_package(Boost COMPONENTS system filesystem REQUIRED)
+
+SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb")
+SET(CMAKE_C_FLAGS_DEBUG "-O0 -ggdb")
+
 
 if(WIN32)
     include_directories( ../core/src/main/ ../deps/ ../deps-win32/include/ ${Boost_INCLUDE_DIR} )

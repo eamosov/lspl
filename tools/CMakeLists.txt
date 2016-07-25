@@ -13,7 +13,7 @@ set(LSPL_CONSOLE_SOURCES
 
 add_executable(lspl-console ${LSPL_CONSOLE_SOURCES})
 
-target_link_libraries(lspl-console lspl)
+target_link_libraries(lspl-console lspl ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
 ### LsplGenerator
 
@@ -25,7 +25,7 @@ set(LSPL_GENERATOR_SOURCES
 
 add_executable(lspl-gen ${LSPL_GENERATOR_SOURCES})
 
-target_link_libraries(lspl-gen lspl)
+target_link_libraries(lspl-gen lspl ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
 ### lspl-find
 
@@ -35,7 +35,7 @@ set(LSPL_FIND_SOURCES
 
 add_executable(lspl-find ${LSPL_FIND_SOURCES})
 
-target_link_libraries(lspl-find lspl)
+target_link_libraries(lspl-find lspl ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
 ### lspl-DictionaryRecognizer
 
@@ -51,7 +51,7 @@ set(LSPL_DICTIONARY_RECOGNIZER_SOURCES
 
 add_executable(lspl-dictionary-recognizer ${LSPL_DICTIONARY_RECOGNIZER_SOURCES})
 
-target_link_libraries(lspl-dictionary-recognizer lspl)
+target_link_libraries(lspl-dictionary-recognizer lspl ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
 ### lspl-Similarity
 
@@ -70,7 +70,7 @@ set(LSPL_SIMILARITY_SOURCES
 
 add_executable(lspl-similarity ${LSPL_SIMILARITY_SOURCES})
 
-target_link_libraries(lspl-similarity lspl)
+target_link_libraries(lspl-similarity lspl ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
 ### lspl-RangeSetDecartTreeTest
 
@@ -82,7 +82,7 @@ set(LSPL_RANGESET_DECART_TREE_TEST_SOURCES
 
 add_executable(lspl-rangeset-decart-tree-test ${LSPL_RANGESET_DECART_TREE_TEST_SOURCES})
 
-target_link_libraries(lspl-rangeset-decart-tree-test lspl)
+target_link_libraries(lspl-rangeset-decart-tree-test lspl ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
 ### lspl-UtilTest
 
@@ -94,7 +94,7 @@ set(LSPL_UTIL_TEST_SOURCES
 
 add_executable(lspl-util-test ${LSPL_UTIL_TEST_SOURCES})
 
-target_link_libraries(lspl-util-test lspl)
+target_link_libraries(lspl-util-test lspl ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
 # Flags for effective error parsing
 

@@ -93,7 +93,7 @@ set_target_properties(lspl
 if(MINGW)
 	target_link_libraries(lspl pcrecpp iconv Graphanrmst Lemmatizerrmst StructDictrmst MorphWizardrmst Agramtabrmst pcre)
 elseif(APPLE)
-	target_link_libraries(lspl pcrecpp iconv pcre Graphanrst Lemmatizerrst StructDictrst MorphWizardrst Agramtabrst)
+	target_link_libraries(lspl pcrecpp iconv pcre Graphanrst Lemmatizerrst StructDictrst MorphWizardrst Agramtabrst ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 else(MINGW)
 	target_link_libraries(lspl pcrecpp pcre Graphanrst Lemmatizerrst StructDictrst MorphWizardrst Agramtabrst)
 endif(MINGW)
@@ -128,10 +128,10 @@ target_link_libraries(lspl-benchmark lspl)
 # Flags for effective error parsing
 
 if(CMAKE_COMPILER_IS_GNUCC)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0 -Wno-deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1")
 endif(CMAKE_COMPILER_IS_GNUCC)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0 -Wno-deprecated-declarations -D_GLIBCXX_USE_CXX11_ABI=1")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 

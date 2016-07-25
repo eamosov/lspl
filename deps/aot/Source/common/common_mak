@@ -9,7 +9,7 @@ ifndef CXX
 	CXX := g++
 endif
 
-cparams := $(cparams) -I$(RML_PCRE_INCLUDE) -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -fPIC
+cparams := $(cparams) -I$(RML_PCRE_INCLUDE) -D_LARGEFILE_SOURCE -D_GLIBCXX_USE_CXX11_ABI=1 -D_FILE_OFFSET_BITS=64 -fPIC
 
 
 ifndef libmode
@@ -17,32 +17,32 @@ ifndef libmode
 endif
 
 ifeq ($(mode), debug)
-	cparams := $(cparams) -MD -c -O0 -g $(common_parms)  -ftemplate-depth-35
+	cparams := $(cparams) -MD -c -O0 -g $(common_parms)  -ftemplate-depth-45
 	ct := d
 else
 	ifeq ($(mode), debug_thread)
-		cparams := $(cparams) -pthread -MD -c -O0 -g $(common_parms)  -ftemplate-depth-35
+		cparams := $(cparams) -pthread -MD -c -O0 -g $(common_parms)  -ftemplate-depth-45
 		lparams := -pthread
 		ct := td
 	else
 		ifeq ($(mode), release_thread)
-			cparams := $(cparams) -pthread -MD -c -O3 -funroll-loops -fomit-frame-pointer $(common_parms) -ftemplate-depth-35
+			cparams := $(cparams) -pthread -MD -c -O3 -funroll-loops -fomit-frame-pointer $(common_parms) -ftemplate-depth-45
 			ct := t
 			lparams := -pthread
 		else
 			ct := r
 			ifeq ($(mode), profile)
 				ifdef profile
-					cparams := $(cparams)  -pg  -MD -c -O3 -funroll-loops $(common_parms) -ftemplate-depth-35
+					cparams := $(cparams)  -pg  -MD -c -O3 -funroll-loops $(common_parms) -ftemplate-depth-45
 					lparams := -lgcov -pg
 					ct := .prof
 				else
-					cparams := $(cparams) -g -MD -c -O3 -funroll-loops  $(common_parms) -ftemplate-depth-35			
+					cparams := $(cparams) -g -MD -c -O3 -funroll-loops  $(common_parms) -ftemplate-depth-45			
 					ct := .prof
 				endif
 			else
 				ifeq ($(mode), release)
-					cparams := $(cparams) -MD -c -O3 -funroll-loops -fomit-frame-pointer  $(common_parms) -ftemplate-depth-35
+					cparams := $(cparams) -MD -c -O3 -funroll-loops -fomit-frame-pointer  $(common_parms) -ftemplate-depth-45
 				else
 					mode_error =  $(error unknown mode. It can be debug, release, profile, debug_thread, release_thread)	
 				endif	

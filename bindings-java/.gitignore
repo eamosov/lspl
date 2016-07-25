@@ -1,3 +1,6 @@
 build
 build-win32
+build-mac
 .settings
+target
+build-linux64

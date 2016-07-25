@@ -34,10 +34,9 @@ using lspl::transforms::JavaTransformBuilder;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_PatternBuilder_create(JNIEnv * env, jclass, jobject nsObj, jobject tbObj) {
 	try {
-		TransformBuilder * tBuilder = tbObj ? static_cast<TransformBuilder *>( new JavaTransformBuilder( env, tbObj ) ) : static_cast<TransformBuilder *>( new DummyTransformBuilder() );
 		NamespaceRef ns = JavaNamespace::get( env, nsObj ).ns;
 
-		return JavaPatternBuilder::get( env, new PatternBuilder( ns, tBuilder ) ).object;
+		return JavaPatternBuilder::get( env, new PatternBuilder( ns ) ).object;
 	} catch ( const std::exception & ex ) {
 		throwRuntimeException( env, ex.what() );
 		return 0;

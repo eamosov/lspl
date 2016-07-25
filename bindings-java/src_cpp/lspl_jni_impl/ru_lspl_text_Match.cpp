@@ -2,6 +2,7 @@
 
 #include "lspl/text/Match.h"
 #include "lspl/text/JavaMatch.h"
+#include "lspl/transforms/TextTransform.h"
 #include "lspl/java/JavaAlternative.h"
 #include "lspl/java/Utils.h"
 
@@ -48,7 +49,8 @@ JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_Match_internalGetVariants(JNIEn
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantTransformResult(JNIEnv * env, jobject obj, jint index) {
 	try {
-		return JavaMatch::get(env,obj)->transition.cast<Match>()->getVariant( index )->getTransformResult<jobject>();
+		const auto& patternResult = JavaMatch::get(env,obj)->transition.cast<Match>()->getVariant( index )->getTransformResult<lspl::transforms::TextTransformResult>();
+		return out( env, patternResult.text);
 	} catch ( lspl::base::Exception & e ) {
 		return 0;
 	} catch ( const std::exception & ex ) {

@@ -74,7 +74,7 @@ public:
 	 */
 	static AttributeValue createIndexed( const std::string & abbrevation, const std::string & name, const std::string & title );
 public:
-	explicit AttributeValue() : type( AttributeType( AttributeType::INDEXED_ID ) ), value( 0 ) {}
+	AttributeValue() : type( AttributeType( AttributeType::INDEXED_ID ) ), value( 0 ) {}
 	explicit AttributeValue( int index ) : type( AttributeType( AttributeType::INDEXED_ID ) ), value( index ) {}
 	explicit AttributeValue( const AttributeContainer & container ) : type( AttributeType( AttributeType::COMPOUND_ID ) ), value( reinterpret_cast<long>( &container ) ) {}
 	explicit AttributeValue( const std::string & str );

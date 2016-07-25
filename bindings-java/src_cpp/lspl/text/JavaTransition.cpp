@@ -61,7 +61,12 @@ JavaTransition::~JavaTransition() {
 }
 
 JavaTransition * JavaTransition::get( JNIEnv * env, jobject obj ) {
-	return transitions.at( env->GetIntField( obj, transitionIdField ) );
+	jint id = env->GetIntField( obj, transitionIdField );
+	JavaTransition *jt = transitions.at( id );
+	if (!jt){
+		throw std::runtime_error("Cound't find transition with id" + std::to_string(id));
+	}
+	return jt;
 }
 
 JavaTransition * JavaTransition::get( JNIEnv * env, const Transition * transition ) {
