@@ -543,6 +543,8 @@ bool CMorphAutomatBuilder::AddStringDaciuk(const string& WordForm)
 				}
 
 				pLastNode = pParent;
+
+                FirstConfluenceState = GetFirstConfluenceState();
 				
 			};
 		

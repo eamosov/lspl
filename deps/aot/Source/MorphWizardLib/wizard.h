@@ -262,6 +262,7 @@ public:
 	bool	check_prefixes(string prefixes) const;
 	bool	attach_form_prefixes_to_bases();
 	bool	prepare_for_RML();
+	bool	prepare_for_RML2();
 
 	bool				HasMeter() const		{ return  !!m_pMeter; }
 	MorphWizardMeter*	GetMeter()				{ return  m_pMeter; }
@@ -274,6 +275,7 @@ public:
 	string  GetUserName() const;
 	void	StartLastSessionOfUser(string user_name);
 	WORD	RegisterSession(const CMorphSession& S);
+    bool    Filter(string flt_str, std::vector<lemma_iterator_t>& found_paradigms) const;
 private:
 	BYTE	_GetReverseVowelNo( const string& form, WORD accentModelNo, WORD formInd ) const;
 	void	SetAccent(WORD AccentModelNo, BYTE AuxAccent, int FormNo, string& form) const;

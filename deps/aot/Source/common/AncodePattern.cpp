@@ -14,6 +14,21 @@ const	CAgramtab* CAncodePattern::GetGramTab() const
     return m_pGramTab;
 }
 
+const string& CAncodePattern::GetGramCodes() const {
+    return m_GramCodes;
+}
+
+void  CAncodePattern::SetGramCodes(const string& s) {
+    assert (s.length() % 2 == 0);
+    for (size_t i = 0; i < s.length(); i += 2)
+        assert (m_pGramTab->CheckGramCode (s.c_str() + i) );
+    m_GramCodes = s;
+}
+
+void  CAncodePattern::SetGramCodes(const char* s) {
+    SetGramCodes (string(s));
+}
+
 
 void CAncodePattern::ResetFlags()
 {
@@ -86,11 +101,11 @@ bool CAncodePattern::DeleteAncodesByGrammemIfCan(BYTE Grammem)
     return true;
 }
 
-bool CAncodePattern::ModifyGrammems(QWORD Grammems , size_t Poses)
+bool CAncodePattern::ModifyGrammems(QWORD Grammems, poses_mask_t Poses)
 {
 	string strOldGramcodes = m_GramCodes;	
 	QWORD  savegrammems = m_iGrammems;	
-	size_t saveposes = m_iPoses;
+	poses_mask_t saveposes = m_iPoses;
 	m_iGrammems = 0;
 	m_iPoses = 0;
 	m_GramCodes = "";
@@ -172,7 +187,7 @@ bool CAncodePattern::InitAncodePattern()
 		}		
 	}
 	
-	if	(		(m_CommonGramCode.length() == 2)
+	if	(		(m_CommonGramCode.length() > 1)
 			&&	(m_CommonGramCode != "??")
 		)
 	{
@@ -182,6 +197,21 @@ bool CAncodePattern::InitAncodePattern()
 		{
 			ErrorMessage(Format("Cannot get grammems by type gramcode %s ",m_CommonGramCode.c_str()));
 		};
+
+		//добавл€ем граммкод аббр в m_TypeGrammems,а все полные формы аббр будут в FormGramCodes
+		for (size_t j=0; j < m_CommonGramCode.length(); j+=2)
+		{
+				QWORD CurrGrammems = 0;		
+				bool b = GetGramTab()->GetGrammems(m_CommonGramCode.c_str() + j, CurrGrammems);
+				assert (b);
+				if (!b)
+				{
+                    ErrorMessage(Format("Cannot get grammems by gramcode %s ",m_CommonGramCode.substr(j,2).c_str()));
+				};
+				m_TypeGrammems |= CurrGrammems;				
+		}
+		if(m_CommonGramCode.length()>2) //аббр
+			m_TypeGrammems &= ~(m_iGrammems|256); // rVocativ = 256 = зв падеж, "км  12 2  RLE aa CS? SENT_END +‘аао  »Ћќћ≈“– абавагадаеажазаиайакал"
 	};
 
 

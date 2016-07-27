@@ -6,8 +6,8 @@
  #define utilit_h
 
 #include  <stdio.h>
-#include  <string.h>
 
+//#define BOOST
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 
@@ -19,7 +19,7 @@
 		extern void  operator delete(void* p, const char* lpszFileName, int nLine);
 		#define DEBUG_NEW new(THIS_FILE, __LINE__)
 	#endif
-
+	
 
 	#include "windows.h"
 	#include "winuser.h"
@@ -36,7 +36,8 @@
 #include  "set"
 #include  "stack"
 #include  "map"
-#include "time.h"
+#include  "time.h"
+#include  <string.h>
 
 
 #pragma warning (disable : 4018)
@@ -45,7 +46,7 @@
 #pragma warning  (disable : 4530)
 #pragma warning  (disable : 4251)
 #pragma warning  (disable : 4996)
-
+		
 
 #ifdef STLPORT
 	using namespace stlport;
@@ -68,11 +69,13 @@ typedef unsigned char BYTE;
 #ifdef WIN32
 	#include  <io.h>
 	#include <fcntl.h>
-	typedef __int64 QWORD;
-
+    #ifndef _WINDNS_INCLUDED_
+	    typedef __int64 QWORD;
+    #endif
+	
 #else
 	#include  <unistd.h>
-	typedef unsigned int	DWORD;
+	typedef unsigned int	DWORD;	
 	typedef unsigned short	WORD;
 	typedef long long		QWORD;
 	typedef unsigned int	UINT;
@@ -86,9 +89,9 @@ typedef vector<DWORD> DwordVector;
 inline QWORD GetMaxQWORD ()
 {
 	#ifdef WIN32
-		return  -1;
+		return  0xffffffffffffffff;
 	#else
-		return  -1;
+		return  0xffffffffffffffffULL;
 	#endif
 };
 
@@ -157,7 +160,7 @@ extern string	CreateTempFileName();
 extern bool		MakeDir(const string& txt);
 extern bool     RemoveWithPrint (const string& FileName);
 
-// working with registry
+// working with registry 
 extern string	GetRegistryString (string RegistryPath);
 extern string	GetRegistryStringFromLocalIniFile (string RegistryPath);
 extern bool		CanGetRegistryString (string RegistryPath);
@@ -190,7 +193,7 @@ extern void		KOI8ToWin (string& s);
 extern void		WinToKOI8 (string& s);
 extern DWORD	StringCrc32(const char* szString);
 
-
+extern FILE* log_fp;
 
 extern void QPEncodeString(string& s);
 extern void QPDecodeString(string& s);
@@ -216,12 +219,12 @@ extern string GetStringByLanguage (MorphLanguageEnum Langua);
 /*
 clears also capacity
 */
-template <class T>
+template <class T> 
 void ClearVector(vector<T>& V)
 {
 	V.clear();
-	vector<T> dummy (V);
-	V.swap (dummy);
+//	vector<T> dummy (V);
+//	V.swap (dummy);
 };
 
 
@@ -271,10 +274,10 @@ const BYTE Apostrophe  = 39;
 
 
 
-
-extern  bool is_german_upper(BYTE x);
+ 
+extern  bool is_german_upper(BYTE x); 
 extern  bool is_german_lower(BYTE x);
-extern  bool is_russian_upper(BYTE x);
+extern  bool is_russian_upper(BYTE x);     
 extern  bool is_russian_lower(BYTE x);
 
 extern  bool is_lower_consonant(BYTE x, MorphLanguageEnum Langua);
@@ -296,10 +299,10 @@ extern  bool isnspace(BYTE x);
 // ===============  Register ========================================
 extern  BYTE etoupper (BYTE ch);
 extern  BYTE etolower (BYTE ch);
-extern  BYTE rtoupper (BYTE ch);
-extern  BYTE rtolower (BYTE ch);
-extern  BYTE gtoupper (BYTE ch);
-extern  BYTE gtolower (BYTE ch);
+extern  BYTE rtoupper (BYTE ch); 
+extern  BYTE rtolower (BYTE ch); 
+extern  BYTE gtoupper (BYTE ch); 
+extern  BYTE gtolower (BYTE ch); 
 extern  BYTE ReverseChar (BYTE ch, MorphLanguageEnum langua);
 extern char* RusMakeUpper (char *word);
 extern char* EngMakeUpper (char *word);
@@ -314,14 +317,14 @@ extern char* RmlMakeUpper (char *word, MorphLanguageEnum langua);
 extern string& RmlMakeUpper (string& word, MorphLanguageEnum langua);
 extern string& RmlMakeLower (string& word, MorphLanguageEnum langua);
 
-// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+// конвертирует из строчной кириллицы в прописные 
 extern string&  EngRusMakeUpper (string& word);
-// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+// конвертирует из строчной кириллицы в прописные 
 extern char*  EngRusMakeUpper (char* word);
 
 
-// check languaage
-extern bool IsRussian (const char *word);
+// check languaage 
+extern bool IsRussian (const char *word); 
 extern bool IsRussian (const string& word);
 extern bool IsEnglish (const char *word);
 extern bool IsEnglish (const string& word);
@@ -331,7 +334,7 @@ extern bool CheckLanguage (const char *word, MorphLanguageEnum langua);
 extern bool CheckLanguage (const string& word, MorphLanguageEnum langua);
 
 
-
+extern bool HasJO(string src);
 extern void ConvertJO2Je(string& src);
 extern void ConvertJO2Je(char* src);
 extern void ConvertJO2Je(char* src, size_t Length);
@@ -365,18 +368,25 @@ T& GerEngRusMakeUpperTemplate (T& word, MorphLanguageEnum Langua, size_t Len )
 					word[i] = etoupper ( (BYTE)word[i] );
 
 	return word;
-};
+};	
 
 
 
 
 
 //  QWORD mask
-#define _QM(X) (((QWORD)1)<<X)
+#define _QM(X) (((QWORD)1)<<(X))
+
+typedef  DWORD poses_mask_t;
 
 enum RegisterEnum {AnyRegister=0, LowLow=1, UpLow=2, UpUp=3};
 
 
 #endif
 
+#define IsPowerOfTwo(x) (((x) != 0) && (((x) & ((x) - 1)) == 0))
 
+extern QWORD pow(QWORD x,int y);
+
+extern int CountBits(QWORD value);
+extern size_t FindFloatingPoint(const char* str);

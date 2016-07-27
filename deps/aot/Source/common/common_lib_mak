@@ -1,29 +1,20 @@
-#########################################
-######## common part  ###################
-#########################################
-
-
 ifeq ($(libmode), shared)
 
 $(LibName).$(lib_ext) : $(objects)
 	$(mode_error)
-	$(CXX) -$(libmode)  -o $@ $^
+	g++ -$(libmode)  -o $@ $^
 	cp $@ $(RML)/Bin
 
 else
 
 $(LibName).$(lib_ext) : $(objects)
 	$(mode_error)
-	$(AR) rcs  $@  $^
+	ar rcs  $@  $^
 endif
-
-#$(precomp): %.h.gch : %.h
-#	echo "test"
-#	$(CXX) $(cparams) $< -o $@
 
 $(objects): %.o$(ct) : %.cpp
 	$(mode_error)
-	$(CXX) $(cparams) $< -o $@
+	g++ $(cparams) $< -o $@
 
 
 include $(wildcard *.d)

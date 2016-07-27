@@ -134,35 +134,70 @@ class CRusGramTab : public CAgramtab{
 	QWORD GleicheGenderNumberCase(const char* common_gram_code_noun, const char* gram_code_noun, const char* gram_code_adj) const;
 
 	bool GleicheGenderNumber(const char* gram_code1, const char* gram_code2) const;
+	bool ConflictGenderNumber(const char* gram_code1, const char* gram_code2) const;//with absent grammems check, less strict than GleicheGenderNumber
+	bool ConflictGrammems(QWORD g1, QWORD g2, QWORD breaks) const;//with absent grammems check, less strict than GleicheGenderNumber
 	bool GleicheSubjectPredicate(const char* gram_code1, const char* gram_code2) const;
 	long GetClauseTypeByName(const char* TypeName) const;
 
 	const char* GetClauseNameByType(long type) const;
 	const size_t GetClauseTypesCount() const;
 
-	bool IsStrongClauseRoot(const DWORD Poses) const;
+	bool IsStrongClauseRoot(const poses_mask_t poses) const;
 	bool is_month (const char* lemma) const;
 	bool is_small_number (const char* lemma) const;
-	bool IsMorphNoun (size_t Poses)  const;
-	bool is_morph_adj (size_t poses) const;
-	bool is_morph_participle (size_t poses) const;
-	bool is_morph_pronoun (size_t poses) const;
-	bool is_morph_pronoun_adjective(size_t poses) const;
-	bool is_left_noun_modifier  (size_t poses, QWORD grammems) const;
-	bool is_numeral (size_t poses) const;
-	bool is_verb_form (size_t poses) const;
-	bool is_infinitive(size_t poses) const;
-	bool is_morph_predk(size_t poses) const;
-	bool is_morph_adv(size_t poses) const;
-	bool is_morph_article(size_t poses) const;
-	bool is_morph_personal_pronoun (size_t poses, QWORD grammems) const;
-	bool IsSimpleParticle(const char* lemma, size_t poses) const;
-	bool IsSynNoun(size_t Poses, const char* Lemma) const;
+	bool IsMorphNoun (poses_mask_t poses)  const;
+	bool is_morph_adj (poses_mask_t poses) const;
+	bool is_morph_participle (poses_mask_t poses) const;
+	bool is_morph_pronoun (poses_mask_t poses) const;
+	bool is_morph_pronoun_adjective(poses_mask_t poses) const;
+	bool is_left_noun_modifier  (poses_mask_t poses, QWORD grammems) const;
+	bool is_numeral (poses_mask_t poses) const;
+	bool is_verb_form (poses_mask_t poses) const;
+	bool is_infinitive(poses_mask_t poses) const;
+	bool is_morph_predk(poses_mask_t poses) const;
+	bool is_morph_adv(poses_mask_t poses) const;
+	bool is_morph_article(poses_mask_t poses) const;
+	bool is_morph_personal_pronoun (poses_mask_t poses, QWORD grammems) const;
+	bool IsSimpleParticle(const char* lemma, poses_mask_t poses) const;
+	bool IsSynNoun(poses_mask_t poses, const char* Lemma) const;
 	bool IsStandardParamAbbr (const char* WordStrUpper) const;
-	
+
 };
 
 extern bool GenderNumberCaseRussian (const CAgramtabLine* l1, const CAgramtabLine* l2);
 extern bool FiniteFormCoordRussian (const CAgramtabLine* l1, const CAgramtabLine* l2);
 
+	// Стандартное согласование между двумя именами  по  числу и падежу
+inline bool CaseNumber (const CAgramtabLine* l1, const CAgramtabLine* l2) 
+  {
+      return ((rAllCases  & l1->m_Grammems & l2->m_Grammems) > 0) &&
+		     ((rAllNumbers & l1->m_Grammems & l2->m_Grammems) > 0) ;
+  };
+inline bool CaseGender (const CAgramtabLine* l1, const CAgramtabLine* l2) 
+  {
+      return ((rAllCases  & l1->m_Grammems & l2->m_Grammems) > 0) &&
+		     ((rAllGenders & l1->m_Grammems & l2->m_Grammems) > 0) ;
+  };
+inline bool CaseNumberGender (const CAgramtabLine* l1, const CAgramtabLine* l2) 
+  {
+      return ((rAllCases  & l1->m_Grammems & l2->m_Grammems) > 0) &&
+			 ((rAllNumbers & l1->m_Grammems & l2->m_Grammems) > 0) &&
+		     ((rAllGenders & l1->m_Grammems & l2->m_Grammems) > 0) ;
+  };
+inline bool CaseNumberGender0 (const CAgramtabLine* l1, const CAgramtabLine* l2) //with absent grammems check
+  {
+      return ((rAllCases   & l1->m_Grammems & l2->m_Grammems) > 0 || !(rAllCases   & l1->m_Grammems) || !(rAllCases   & l2->m_Grammems)) &&
+			 ((rAllNumbers & l1->m_Grammems & l2->m_Grammems) > 0 || !(rAllNumbers & l1->m_Grammems) || !(rAllNumbers & l2->m_Grammems)) &&
+		     ((rAllGenders & l1->m_Grammems & l2->m_Grammems) > 0 || !(rAllGenders & l1->m_Grammems) || !(rAllGenders & l2->m_Grammems));			 ;
+  };
+inline bool GenderNumber0 (const CAgramtabLine* l1, const CAgramtabLine* l2) //with absent grammems check
+  {
+      return ((rAllGenders & l1->m_Grammems & l2->m_Grammems) > 0 || !(rAllGenders & l1->m_Grammems) || !(rAllGenders & l2->m_Grammems)) &&
+			 ((rAllNumbers & l1->m_Grammems & l2->m_Grammems) > 0 || !(rAllNumbers & l1->m_Grammems) || !(rAllNumbers & l2->m_Grammems));			 
+  };	
+inline bool CaseNumber0 (const CAgramtabLine* l1, const CAgramtabLine* l2) //with absent grammems check
+  {
+      return ((rAllCases   & l1->m_Grammems & l2->m_Grammems) > 0 || !(rAllCases   & l1->m_Grammems) || !(rAllCases   & l2->m_Grammems)) &&
+			 ((rAllNumbers & l1->m_Grammems & l2->m_Grammems) > 0 || !(rAllNumbers & l1->m_Grammems) || !(rAllNumbers & l2->m_Grammems));			 ;
+  };
 #endif //__RUSGRAMTAB_H_

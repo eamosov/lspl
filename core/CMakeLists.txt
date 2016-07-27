@@ -90,12 +90,15 @@ set_target_properties(lspl
     SUFFIX "${MY_TARGETLIB_SUFFIX}"
 )
 
+add_library(lspl_static STATIC ${LSPL_CORE_SOURCES})
+
+target_link_libraries(lspl pcrecpp pcre Graphanrst Lemmatizerrst StructDictrst MorphWizardrst Agramtabrst)
+
 if(MINGW)
-	target_link_libraries(lspl pcrecpp iconv Graphanrmst Lemmatizerrmst StructDictrmst MorphWizardrmst Agramtabrmst pcre)
+	target_link_libraries(lspl iconv)
 elseif(APPLE)
-	target_link_libraries(lspl pcrecpp iconv pcre Graphanrst Lemmatizerrst StructDictrst MorphWizardrst Agramtabrst ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+	target_link_libraries(lspl iconv ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 else(MINGW)
-	target_link_libraries(lspl pcrecpp pcre Graphanrst Lemmatizerrst StructDictrst MorphWizardrst Agramtabrst)
 endif(MINGW)
 
 ### lspl-test binary

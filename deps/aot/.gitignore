@@ -1,5 +1,3 @@
-Dists
-
 Dicts/Ross/
 Dicts/SrcMorph/
 Dicts/SynAn/
@@ -8,3 +6,6 @@ Test/Synan/
 Thes/
 compile_synan.sh
 generate_syn_bin.sh
+*.bin
+gra
+test_glr.log

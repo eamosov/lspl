@@ -91,7 +91,14 @@ set(LSPL_JAVA_SOURCES
 add_library(lspl-java SHARED ${LSPL_JAVA_SOURCES})
 add_dependencies(lspl-java lspl.jar jni-stubs)
 
-target_link_libraries(lspl-java lspl)
+target_link_libraries(lspl-java lspl_static Graphanrst Lemmatizerrst StructDictrst MorphWizardrst Agramtabrst ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${PCRECPP} ${PCRE})
+
+if(APPLE)
+	target_link_libraries(lspl-java iconv)
+else(APPLE)
+	target_link_libraries(lspl-java -static-libgcc -static-libstdc++ )
+endif(APPLE)
+
 
 set_target_properties(lspl-java
     PROPERTIES

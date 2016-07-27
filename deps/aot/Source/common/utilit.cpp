@@ -316,7 +316,7 @@ file_off_t FileSize (const char *filename)
 bool FSeek(FILE* fp, file_off_t pos, int origin)
 {
 	#ifdef WIN32
-		return fseek(fp, pos, origin) == 0;
+		return _fseeki64(fp, pos, origin) == 0;
 	#else
 		return fseeko(fp, pos, origin) == 0;
 	#endif
@@ -326,7 +326,7 @@ bool FSeek(FILE* fp, file_off_t pos, int origin)
 file_off_t FTell(FILE* fp)
 {
 	#ifdef WIN32
-		return ftell(fp) ;
+		return _ftelli64(fp) ;
 	#else
 		return ftello(fp);
 	#endif
@@ -449,7 +449,7 @@ string	CreateTempFileName()
 		if (sTempPath)
 		{
 			strcpy(tmpfilename, sTempPath);
-			if (tmpfilename[strlen(tmpfilename)-1] != '/')
+			if (strlen(tmpfilename) > 0 && tmpfilename[strlen(tmpfilename)-1] != '/')
 				strcat (tmpfilename,"/");
 			strcat (tmpfilename,"rml-temp.XXXXXX");
 		}
@@ -466,6 +466,7 @@ string	CreateTempFileName()
 
 };
 
+FILE* log_fp = 0;
 
 void rml_TRACE( const char* format, ... )
 {
@@ -483,7 +484,15 @@ void rml_TRACE( const char* format, ... )
           va_start( arglst, format );
 	      vsprintf( s, format, arglst);
 	      va_end( arglst );
-		  OutputDebugString(s);
+		  OutputDebugString((s));
+		  
+		  if (log_fp)
+		  {
+			  fprintf (log_fp, "%s", s);
+			  fflush (log_fp);
+		  }
+		  else log_fp =  fopen("debug.log", "w+");
+
 	#endif
 #endif
 };
@@ -695,6 +704,7 @@ void AddFile(const char* MainFile, const char* ToAdd)
 };
 
 #ifdef WIN32
+    #include <windows.h>
 	string TryReadRMLFromRegistry()
 	{
 		HKEY hKeyResult; 
@@ -926,15 +936,7 @@ struct tm  RmlGetCurrentTime ()
 
 bool CheckEvaluationTime ()
 {
-	tm today = RmlGetCurrentTime();
-
-	//  2008 year
-	if (today.tm_year > 108)
-	{
-		ErrorMessage("Evaluation period is expired. Write to sokirko@yandex.ru!");
-		return false;
-	};
-	return true;
+    return true;
 };
 
 
@@ -1676,7 +1678,18 @@ void ConvertJO2Je(char* src, size_t Length)
 	ConvertJO2JeTemplate(src, Length);
 };
 
-
+bool HasJO(string src) 
+{
+	for (size_t i = 0; i < src.length(); i++)
+	{
+		if ( ((BYTE)src[i]) == LowerJO )
+			return true;
+		else
+			if ( ( (BYTE)src[i]) == UpperJO)
+			 return true;
+	}
+	return false;
+}
 
 void ConvertJO2Je(string& src) 
 {
@@ -1689,9 +1702,7 @@ void ConvertJO2Je(char* src)
 };
 
 
-#ifdef WIN32
-	#define vsnprintf _vsnprintf
-#endif
+
 
 
 string Format( const char* format, ... )
@@ -2575,4 +2586,29 @@ string BuildRMLPath (const char* s)
     if (i != string::npos)
         path.replace(i, 4, GetRmlVariable());
     return path;
+}
+
+QWORD pow(QWORD x,int y)
+{
+	if(x>1&&y>100) return 0;
+	return y==0 || x==1 ? 1 : x*pow(x,y-1);
+}
+
+int CountBits(QWORD value)
+{
+	int count = 0;
+	for (int i=0; i < 64; i++)
+	{
+		count += (value >> i) & 1;
+	}
+	return count;
+}
+size_t FindFloatingPoint(const char* str)
+{
+	if(!str || sizeof(str)<3) return -1;
+	string s(str);
+	size_t c = s.rfind(",");
+	if (c == string::npos) 
+		c = s.rfind(".");
+	return c == string::npos ? -1 : c;
 }

@@ -23,11 +23,9 @@ public abstract class LsplObject {
 	        OsCheck.OSType ostype=OsCheck.getOperatingSystemType();
 	        switch (ostype) {
 	            case MacOS:
-	                NativeUtils.loadLibraryFromJar("/lib/mac/liblspl.so");
 	                NativeUtils.loadLibraryFromJar("/lib/mac/liblspl-java.so");
 	                break;
 	            case Linux:
-                    NativeUtils.loadLibraryFromJar("/lib/linux/liblspl.so");
                     NativeUtils.loadLibraryFromJar("/lib/linux/liblspl-java.so");
                     break;	                
 	            default:

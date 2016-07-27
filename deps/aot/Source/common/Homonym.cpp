@@ -31,10 +31,10 @@ void	CHomonym::SetLemma(string Lemma)
 
 bool	CHomonym::HasSetOfGrammemsExact(QWORD Grammems) const
 {
-	for (int i = 0; i < m_GramCodes.length(); i += 2)
+	for (int i = 0; i < GetGramCodes().length(); i += 2)
 	{
 		QWORD g;
-		if (!GetGramTab()->GetGrammems(m_GramCodes.c_str()+i, g))
+		if (!GetGramTab()->GetGrammems(GetGramCodes().c_str()+i, g))
 		{
 				assert (false);
 		};
@@ -107,7 +107,7 @@ bool CHomonym::ProcessLemmaAndGrammems(const char* CurrStr)
 	// lem-sign
 	{
 		const char* s = tok.val();
-		if	(		(strlen(s) != 3) 
+		if	(		(strlen(s) < 3) //"êì  0 2  RLE aa CS? SENT_END +Ôààî ÊÈËÎÌÅÒÐ àáàâàãàäàåàæàçàèàéàêàë 177648 1"
 				||	(		(s[0] != '+') 
 						&&	(s[0] != '-') 
 						&&	(s[0] != '?') 
@@ -134,8 +134,7 @@ bool CHomonym::ProcessLemmaAndGrammems(const char* CurrStr)
 
 	// ancode
 	if( !tok() ) return false;
-	m_GramCodes = tok.val();
-	
+	SetGramCodes ( tok.val() );
 	
 	// paradigm ID
 	if( !tok() ) return false;
@@ -171,7 +170,7 @@ void  CHomonym::SetMorphUnknown()
 
 void  CHomonym::SetHomonym(const CFormInfo* F)
 {
-    m_GramCodes = F->GetSrcAncode();
+    SetGramCodes ( F->GetSrcAncode() );
     m_CommonGramCode   = F->GetCommonAncode();
     m_lPradigmID = F->GetParadigmId();
     m_LemSign = F->GetLemSign();

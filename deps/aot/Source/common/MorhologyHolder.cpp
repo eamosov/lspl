@@ -41,16 +41,10 @@ void CMorphologyHolder::DeleteProcessors()
 
 };
 
-
-bool CMorphologyHolder::LoadGraphanAndLemmatizer(MorphLanguageEnum langua)
+bool CMorphologyHolder::LoadLemmatizer(MorphLanguageEnum langua)
 {
-	try
-	{
-		DeleteProcessors();
-
-		m_Graphan.FreeDicts();
-		m_Graphan.m_Language = langua;
-
+    try {
+        DeleteProcessors();
 		if (langua == morphRussian)
 		{
 			m_pGramTab = new CRusGramTab;
@@ -73,14 +67,6 @@ bool CMorphologyHolder::LoadGraphanAndLemmatizer(MorphLanguageEnum langua)
 				ErrorMessage ("unsupported language");
 				return false;
 			};
-				
-
-        if (!m_Graphan.LoadDicts())
-		{	
-			ErrorMessage("Cannot load graphan\n");
-			return false;
-		}
-
 		string strError;
 		if (!m_pLemmatizer->LoadDictionariesRegistry(strError))
 		{
@@ -102,6 +88,32 @@ bool CMorphologyHolder::LoadGraphanAndLemmatizer(MorphLanguageEnum langua)
 		return false;
 	};
 
+}
+
+
+bool CMorphologyHolder::LoadGraphanAndLemmatizer(MorphLanguageEnum langua)
+{
+	try
+	{
+		DeleteProcessors();
+
+		m_Graphan.FreeDicts();
+		m_Graphan.m_Language = langua;
+        if (!m_Graphan.LoadDicts())
+		{	
+			ErrorMessage("Cannot load graphan\n");
+			return false;
+		}
+        if (! LoadLemmatizer(langua) )
+            return false;
+
+		return true;
+	}
+	catch(...)
+	{
+		return false;
+	};
+
 };
 
 
@@ -111,8 +123,6 @@ bool CMorphologyHolder::GetMorphology(string str, bool bFile, int& CountOfWords)
 	CountOfWords = 0;
 
 	try {
-		
-
 		// ============  Graphematics =======================
 		if (m_bTimeStatis) t1= clock();
 		bool bResult = (bFile) ? m_Graphan.LoadFileToGraphan(str.c_str()):m_Graphan.LoadStringToGraphan(str.c_str());
@@ -133,8 +143,6 @@ bool CMorphologyHolder::GetMorphology(string str, bool bFile, int& CountOfWords)
 
 			double speed =  ((double)CountOfWords)/((t2-t1)/((double)CLOCKS_PER_SEC));
 			fprintf(stderr,"Graphan: Ticks = %i Speed = %6.0f\n", t2-t1, speed );
-			
-
 		};
 
 		// ============  Morphology =======================

@@ -432,9 +432,9 @@ int  CLemWord::GetHomonymByPOS(BYTE POS) const
 	return -1;
 }
 
-size_t  CLemWord::GetPoses() const
+poses_mask_t  CLemWord::GetPoses() const
 {
-    size_t Poses = 0;
+    poses_mask_t Poses = 0;
 	for(int i = 0 ; i < GetHomonymsCount(); i++)
         Poses |= GetHomonym(i)->m_iPoses;
 	return Poses;
@@ -478,7 +478,7 @@ int CLemWord::GetHomonymByPOSandGrammem(BYTE POS, BYTE grammem) const
 	return -1;
 }
 
-int CLemWord::GetHomonymByPosesandGrammem(size_t Poses, BYTE grammem) const
+int CLemWord::GetHomonymByPosesandGrammem(poses_mask_t Poses, BYTE grammem) const
 {
 	for(int i = 0 ; i < GetHomonymsCount(); i++)
 		if(			GetHomonym(i)->HasGrammem(grammem) 
@@ -511,6 +511,7 @@ string CLemWord::GetDebugString(const CHomonym* pHomonym, bool bFirstHomonym)  c
 {
     string Result;
     if (!bFirstHomonym) Result = "  ";
+	if(!pHomonym) pHomonym = GetHomonym(0);
 	Result += m_strWord;
 	Result += " ";
     Result += Format (" %i %i ", m_GraphematicalUnitOffset, m_TokenLengthInFile);
@@ -518,14 +519,14 @@ string CLemWord::GetDebugString(const CHomonym* pHomonym, bool bFirstHomonym)  c
 	if (pHomonym->m_LemSign != 0)
 	{
         assert (!pHomonym->m_strLemma.empty());
-        assert (!pHomonym->m_GramCodes.empty());
+        assert (!pHomonym->GetGramCodes().empty());
         assert (!pHomonym->m_CommonGramCode.empty());
 
         Result += " " + Format("%c",pHomonym->m_LemSign);
         Result += " " + pHomonym->m_strLemma;
         Result += " " + pHomonym->GetGramTab()->GetTabStringByGramCode(pHomonym->m_CommonGramCode.c_str());
-        for (int i=0; i < pHomonym->m_GramCodes.length(); i+=2)
-            Result += " " + pHomonym->GetGramTab()->GetTabStringByGramCode(pHomonym->m_GramCodes.c_str()+i);
+        for (int i=0; i < pHomonym->GetGramCodes().length(); i+=2)
+            Result += " " + pHomonym->GetGramTab()->GetTabStringByGramCode(pHomonym->GetGramCodes().c_str()+i);
     }
 	return  Result;
 }
@@ -545,10 +546,10 @@ string CLemWord :: GetPlmStr (const CHomonym* pHomonym, bool bFirstHomonym)  con
 	if (pHomonym->m_LemSign != 0)
 	{
         assert (!pHomonym->m_strLemma.empty());
-        assert (!pHomonym->m_GramCodes.empty());
+        assert (!pHomonym->GetGramCodes().empty());
         assert (!pHomonym->m_CommonGramCode.empty());
         
-        Result += pHomonym->m_LemSign + pHomonym->m_CommonGramCode + " " + pHomonym->m_strLemma + " " + pHomonym->m_GramCodes + " ";
+        Result += pHomonym->m_LemSign + pHomonym->m_CommonGramCode + " " + pHomonym->m_strLemma + " " + pHomonym->GetGramCodes() + " ";
         Result +=  Format("%i %i", pHomonym->m_lPradigmID, pHomonym->m_lFreqHom);
 	};
 

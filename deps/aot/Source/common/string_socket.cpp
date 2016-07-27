@@ -14,7 +14,10 @@
 		#include <netdb.h>
 		#include <stdio.h>
 		#define SOCKET int
-
+        #include <syslog.h>
+        #include <sys/wait.h>
+        #include <sys/resource.h>
+	#include <signal.h>
 #endif
 
 
@@ -109,22 +112,7 @@ inline bool send_buffer(int client_fd, const char* Buffer,int Length, string& Er
 	
 
 	int count;
-	#ifdef WIN32
-		count = send(client_fd, Buffer, Length, 0);
-	#else
-			count = send(client_fd, Buffer, Length, MSG_NOSIGNAL);
-			/*if (count == -1)
-			{
-				char buffer[1000];
-				int err = errno;
-				int result = strerror_r(err, buffer, 1000);
-				if (result == -1)
-					Error =  Format( "unknown error code: %i", err);
-				else
-					Error =  buffer;
-				return false;
-			}*/
-	#endif
+	count = send(client_fd, Buffer, Length, 0);
 	if (count == -1)
 	{
 		int err = errno;
@@ -138,10 +126,11 @@ inline bool send_buffer(int client_fd, const char* Buffer,int Length, string& Er
 
 
 
+const size_t PacketHeaderSize = 20;
 bool SendString (int client_fd, const char* Str, size_t  PacketLength, string& ErrorStr)
 {
 	try {
-		if (!send_buffer(client_fd, (const char*)&PacketLength, sizeof(PacketLength), ErrorStr) )
+		if (!send_buffer(client_fd, Format("%020i", PacketLength).c_str(), PacketHeaderSize, ErrorStr) )
 		{
 			return false;
 		}
@@ -195,11 +184,7 @@ inline NetworkErrorsEnum recieve_buffer(int client_fd, char* Buffer,int Length, 
 	if (!FD_ISSET(client_fd,&fds)) return neCouldNotReceiveData;
 	errno = 0;
 
-	#ifdef WIN32
-		have_read = recv (client_fd, Buffer, Length, 0);
-	#else
-		have_read = recv (client_fd, Buffer, Length, MSG_NOSIGNAL);
-	#endif
+	have_read = recv (client_fd, Buffer, Length, 0);
 
 	//MSG_OOB
 
@@ -221,13 +206,16 @@ NetworkErrorsEnum RecieveString (int  client_fd, string& Result, int TimeOut)
 	try {
 		int PacketLength;
 		int have_read;
-
-		NetworkErrorsEnum Res = recieve_buffer (client_fd, (char*)&PacketLength, sizeof(PacketLength), have_read, TimeOut);
+        char PacketLengthStr[PacketHeaderSize + 1];
+		NetworkErrorsEnum Res = recieve_buffer (client_fd, PacketLengthStr, PacketHeaderSize, have_read, TimeOut);
 		if (Res != neSuccess )
 		{
 			return Res;
 		}
-
+        PacketLengthStr[PacketHeaderSize] = 0;
+        PacketLength = atoi(PacketLengthStr);
+        
+        
 		
 		const int buffer_len = 1000;
 		char buffer[buffer_len+1];
@@ -775,3 +763,25 @@ void CHost::CopyAddressParametersFrom(const CHost& X)
 };
 
 
+void start_as_daemon(const char* daemon_name) {
+    //      working as a daemon
+    if (getppid()!=1)
+    {
+        signal(SIGTTOU,SIG_IGN);
+        signal(SIGTTIN,SIG_IGN);
+        signal(SIGTSTP,SIG_IGN);
+        if(fork()!=0) {
+            exit(0);
+        };
+        setsid();
+    }
+
+    struct rlimit flim;
+    getrlimit(RLIMIT_NOFILE, &flim);
+
+    for(int fd=0;fd<flim.rlim_max;fd++)
+            close(fd);
+    chdir("/");
+
+    openlog(daemon_name, LOG_PID| LOG_CONS, LOG_DAEMON );
+}

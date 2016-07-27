@@ -19,3 +19,15 @@ SynanLib
 TestSynan
 TrigramLib
 SynCommonLib
+AprDictGen/AprDictGen
+GenFreqDict/GenFreqDict
+GenSynDict/GenSynDict
+StatDatBin/StatDatBin
+TestSeman/TestSeman
+WordDatBin/WordDatBin
+asp_read/asp_read
+deriv_read/deriv_read
+*.a
+*.otst
+*.orst
+*.d

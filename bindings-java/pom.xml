@@ -65,12 +65,6 @@
 										<include>liblspl-java.so</include>
 									</includes>
 								</resource>
-								<resource>
-									<directory>${project.basedir}/../core/build-mac</directory>
-									<includes>
-										<include>liblspl.so</include>
-									</includes>
-								</resource>
 							</resources>
 						</configuration>
 					</execution>
@@ -89,12 +83,6 @@
 									<directory>build-linux64</directory>
 									<includes>
 										<include>liblspl-java.so</include>
-									</includes>
-								</resource>
-								<resource>
-									<directory>${project.basedir}/../core/build-linux64</directory>
-									<includes>
-										<include>liblspl.so</include>
 									</includes>
 								</resource>
 
